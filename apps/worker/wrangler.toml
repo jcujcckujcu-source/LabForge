@@ -1,0 +1,35 @@
+name = "labforge-worker"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ─── Bindings ────────────────────────────────────────────────────────────────
+
+[[d1_databases]]
+binding = "DB"
+database_name = "labforge"
+database_id = "ef8622df-23e8-45f2-8e1a-6fc0a9bd50f1"
+
+[[r2_buckets]]
+binding = "REPORTS_BUCKET"
+bucket_name = "labforge-reports"
+
+# ─── Environment variables ────────────────────────────────────────────────────
+# JWT_SECRET: задаётся через wrangler secret put JWT_SECRET
+
+[vars]
+FRONTEND_URL = "https://labforge.pages.dev"
+
+# ─── Local dev overrides ──────────────────────────────────────────────────────
+[dev]
+port = 8787
+
+[[rules]]
+type = "CompiledWasm"
+globs = ["**/*.wasm"]
+fallthrough = true
+
+[[rules]]
+type = "Data"
+globs = ["**/*.ttf"]
+fallthrough = true

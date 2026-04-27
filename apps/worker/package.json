@@ -1,0 +1,24 @@
+{
+  "name": "labforge-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev src/index.ts",
+    "deploy": "wrangler deploy src/index.ts",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv"
+  },
+  "dependencies": {
+    "hono": "^4.7.7",
+    "zod": "^3.24.2",
+    "@lab-gen/llm-client": "*",
+    "@lab-gen/image-gen": "*",
+    "@lab-gen/doc-gen": "*",
+    "@resvg/resvg-wasm": "^2.6.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250422.0",
+    "typescript": "^5",
+    "wrangler": "^4.12.0"
+  }
+}
