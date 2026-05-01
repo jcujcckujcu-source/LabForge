@@ -1,9 +1,9 @@
-name = "labforge-worker"
+﻿name = "labforge-worker"
 main = "src/index.ts"
 compatibility_date = "2025-04-01"
 compatibility_flags = ["nodejs_compat"]
 
-# ─── Bindings ────────────────────────────────────────────────────────────────
+# в”Ђв”Ђв”Ђ Bindings в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 
 [[d1_databases]]
 binding = "DB"
@@ -14,13 +14,14 @@ database_id = "ef8622df-23e8-45f2-8e1a-6fc0a9bd50f1"
 binding = "REPORTS_BUCKET"
 bucket_name = "labforge-reports"
 
-# ─── Environment variables ────────────────────────────────────────────────────
-# JWT_SECRET: задаётся через wrangler secret put JWT_SECRET
+# в”Ђв”Ђв”Ђ Environment variables в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# JWT_SECRET: Р·Р°РґР°С‘С‚СЃСЏ С‡РµСЂРµР· wrangler secret put JWT_SECRET
 
 [vars]
-FRONTEND_URL = "https://labforge.pages.dev"
+JWT_SECRET = "local-dev-fallback-secret-key-that-is-long-enough-12345678"
+FRONTEND_URL = "https://lab-gen.pages.dev"
 
-# ─── Local dev overrides ──────────────────────────────────────────────────────
+# в”Ђв”Ђв”Ђ Local dev overrides в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 [dev]
 port = 8787
 
@@ -33,3 +34,4 @@ fallthrough = true
 type = "Data"
 globs = ["**/*.ttf"]
 fallthrough = true
+

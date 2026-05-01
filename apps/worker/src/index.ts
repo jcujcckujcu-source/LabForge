@@ -23,19 +23,22 @@ app.use("*", cors({
   credentials: true,
 }));
 
-// ─── Global Error Handler ────────────────────────────────────────────────────
-app.onError((err, c) => {
-  console.error("Global Error:", err);
-  return c.json({
-    error: `Server Error: ${err.message}`,
-  }, 500);
+// ─── Global Middleware ────────────────────────────────────────────────────────
+app.use("*", async (c, next) => {
+  if (!c.env.JWT_SECRET) {
+    c.env.JWT_SECRET = "local-dev-fallback-secret-key-that-is-long-enough";
+  }
+  await next();
 });
 
-// ─── Health check ─────────────────────────────────────────────────────────────
-app.get("/api/health", (c) => c.json({ status: "ok", ts: Date.now() }));
+import auth from "./routes/auth";
+import lab from "./routes/lab";
+import bot from "./routes/bot";
+import promoBot from "./routes/promo-bot";
 
-// ─── Routes ───────────────────────────────────────────────────────────────────
 app.route("/api/auth", auth);
 app.route("/api/lab", lab);
+app.route("/api/bot", bot);
+app.route("/api/promo-bot", promoBot);
 
 export default app;

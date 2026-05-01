@@ -21,8 +21,14 @@ const KEYWORDS = new Set([
   "async", "await", "task", "list", "array", "Console", "WriteLine", "Read", "using",
 ]);
 
-export async function highlightCSharp(code: string): Promise<TokenLine[]> {
+export async function highlightCode(code: string, fileName: string): Promise<TokenLine[]> {
+  const isCSharp = fileName.endsWith(".cs");
   const lines = code.split("\n");
+  
+  if (!isCSharp) {
+    return lines.map(line => [{ content: line, color: COLORS.default }]);
+  }
+
   return lines.map((line) => {
     const tokens: TokenSpan[] = [];
     // Простейший токенизатор по словам и строкам

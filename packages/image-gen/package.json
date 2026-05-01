@@ -12,6 +12,7 @@
     "@shikijs/langs": "^4.0.2",
     "@shikijs/themes": "^4.0.2",
     "@types/react": "^18.3.3",
+    "mermaid": "^11.14.0",
     "react": "^18.3.1",
     "satori": "^0.10.13",
     "shiki": "^1.29.2"

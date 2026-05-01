@@ -40,3 +40,15 @@ export async function renderElementToPng(
   const pngData = resvg.render();
   return Buffer.from(pngData.asPng());
 }
+
+export async function renderSvgToPng(
+  svg: string,
+  width: number
+): Promise<Buffer> {
+  const resvg = new Resvg(svg, {
+    fitTo: { mode: "width", value: width },
+  });
+
+  const pngData = resvg.render();
+  return Buffer.from(pngData.asPng());
+}

@@ -18,10 +18,11 @@ function b64urlDecode(str: string): ArrayBuffer {
 }
 
 async function getKey(secret: string): Promise<CryptoKey> {
+  const finalSecret = secret || "dev-fallback-secret-key-that-is-long-enough-12345678";
   const enc = new TextEncoder();
   return crypto.subtle.importKey(
     "raw",
-    enc.encode(secret),
+    enc.encode(finalSecret),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign", "verify"]
@@ -38,7 +39,8 @@ export async function signJwt(payload: JwtPayload, secret: string): Promise<stri
   const header = b64urlEncode(new TextEncoder().encode(JSON.stringify({ alg: "HS256", typ: "JWT" })));
   const body = b64urlEncode(new TextEncoder().encode(JSON.stringify(payload)));
   const key = await getKey(secret);
-  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`${header}.${body}`));
+  const data = new TextEncoder().encode(`${header}.${body}`);
+  const sig = await crypto.subtle.sign("HMAC", key, data);
   return `${header}.${body}.${b64urlEncode(sig)}`;
 }
 

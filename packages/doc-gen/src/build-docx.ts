@@ -56,7 +56,8 @@ function heading(text: string, level = HeadingLevel.HEADING_1): Paragraph {
 }
 
 function codeLines(code: string): Paragraph[] {
-  return code.split("\n").map(
+  const safeCode = code || "";
+  return safeCode.split("\n").map(
     (line) => new Paragraph({
       spacing: { line: 240 },
       shading: { type: ShadingType.SOLID, color: "F5F5F5", fill: "F5F5F5" },
@@ -98,20 +99,46 @@ function gap(before = 200, after = 80): Paragraph {
 
 function buildTitlePage(lab: LabStructure, meta: DocMeta): Paragraph[] {
   return [
-    center("МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ РОССИЙСКОЙ ФЕДЕРАЦИИ", { bold: true, spacing: { after: 80 } }),
-    center(meta.university, { spacing: { after: 80 } }),
-    center(meta.department, { spacing: { after: 400 } }),
-    center("ЛАБОРАТОРНАЯ РАБОТА", { size: 32, bold: true, spacing: { after: 120 } }),
-    center(`№${lab.labNumber}`, { size: 32, bold: true, spacing: { after: 120 } }),
-    center(`Тема: ${lab.title}`, { bold: true, spacing: { after: 400 } }),
+    center("МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ РОССИЙСКОЙ ФЕДЕРАЦИИ", { bold: true, spacing: { after: 40 } }),
+    center(meta.university, { bold: true, spacing: { after: 80 } }),
+    center(meta.department, { spacing: { after: 800 } }),
+    center("ЛАБОРАТОРНАЯ РАБОТА", { size: 36, bold: true, spacing: { after: 120 } }),
+    center(`№${lab.labNumber}`, { size: 36, bold: true, spacing: { after: 120 } }),
+    center(`Тема: ${lab.title}`, { size: 32, bold: true, spacing: { after: 1200 } }),
     right(`Выполнил: ${meta.student}`, { spacing: { before: 0, after: 60 } }),
     right(`Группа: ${meta.group}`, { spacing: { before: 0, after: 60 } }),
     right(`Проверил: ${meta.teacher}`, { spacing: { before: 200, after: 60 } }),
     // Поля для преподавателя
+    new Paragraph({ spacing: { before: 400 } }),
     right("Дата выполнения: _______________", { spacing: { before: 80, after: 60 } }),
     right("Оценка: _______________________", { spacing: { before: 0, after: 80 } }),
-    new Paragraph({ spacing: { before: 400 } }),
+    new Paragraph({ spacing: { before: 1200 } }),
     center(`${meta.city}, ${new Date().getFullYear()}`, { spacing: { before: 0, after: 0 } }),
+    pageBreak(),
+  ];
+}
+
+// ─── Table of Contents (Placeholder) ──────────────────────────────────────────
+
+function buildTOC(): Paragraph[] {
+  return [
+    center("СОДЕРЖАНИЕ", { bold: true, size: 28, spacing: { after: 400 } }),
+    new Paragraph({
+      spacing: { after: 200 },
+      children: [new TextRun({ text: "Введение ................................................................................................................... 3", font: FONT, size: SIZE_BODY })]
+    }),
+    new Paragraph({
+      spacing: { after: 200 },
+      children: [new TextRun({ text: "1. Задания .................................................................................................................... 4", font: FONT, size: SIZE_BODY })]
+    }),
+    new Paragraph({
+      spacing: { after: 200 },
+      children: [new TextRun({ text: "2. Контрольные вопросы ........................................................................................ 8", font: FONT, size: SIZE_BODY })]
+    }),
+    new Paragraph({
+      spacing: { after: 200 },
+      children: [new TextRun({ text: "3. Вывод .................................................................................................................... 12", font: FONT, size: SIZE_BODY })]
+    }),
     pageBreak(),
   ];
 }
@@ -171,17 +198,39 @@ function buildTasksSection(
 
     // IDE screenshot
     const sc = screenshotMap.get(task.number);
+    const isNetworks = (lab as any).languageId === "networks";
+
     if (sc) {
+      const ideCaption = isNetworks 
+        ? `Рисунок ${figureNum++} — Задание ${task.number}: схема и конфигурация оборудования`
+        : `Рисунок ${figureNum++} — Задание ${task.number}: код в среде Visual Studio 2022`;
+      
       result.push(
         imageParagraph(sc.idePng, 470, 260),
-        caption(`Рисунок ${figureNum++} — Задание ${task.number}: код в среде Visual Studio 2022`),
+        caption(ideCaption),
       );
 
       // Console screenshot (только если есть)
       if (sc.consolePng) {
+        const consoleCaption = isNetworks
+          ? `Рисунок ${figureNum++} — Задание ${task.number}: диагностика и проверка (ping/tracert)`
+          : `Рисунок ${figureNum++} — Задание ${task.number}: результат выполнения программы`;
+        
         result.push(
           imageParagraph(sc.consolePng, 430, 240),
-          caption(`Рисунок ${figureNum++} — Задание ${task.number}: результат выполнения программы`),
+          caption(consoleCaption),
+        );
+      }
+
+      // Diagram (Mermaid) screenshot
+      if (sc.diagramPng) {
+        const diagCaption = isNetworks
+          ? `Рисунок ${figureNum++} — Задание ${task.number}: топология локальной сети`
+          : `Рисунок ${figureNum++} — Задание ${task.number}: схема алгоритма решения`;
+          
+        result.push(
+          imageParagraph(sc.diagramPng, 500, 300),
+          caption(diagCaption),
         );
       }
     }
@@ -192,7 +241,7 @@ function buildTasksSection(
         spacing: { before: 80, after: 40 },
         children: [new TextRun({ text: "Вывод программы:", font: FONT, size: SIZE_BODY, italics: true })],
       }),
-      ...codeLines(task.output),
+      ...codeLines(task.output as any),
       gap(),
     );
   }
@@ -276,10 +325,10 @@ export async function buildLabReport(
       properties: {
         page: {
           margin: {
-            top: convertInchesToTwip(1.1),
-            bottom: convertInchesToTwip(0.9),
-            left: convertInchesToTwip(1.18),
-            right: convertInchesToTwip(0.79),
+            top: convertInchesToTwip(0.79),    // 20mm
+            bottom: convertInchesToTwip(0.79), // 20mm
+            left: convertInchesToTwip(1.18),   // 30mm
+            right: convertInchesToTwip(0.39),  // 10mm
           },
         },
       },
@@ -287,7 +336,10 @@ export async function buildLabReport(
         // ── 1. Title page
         ...buildTitlePage(lab, meta),
 
-        // ── 2. Objective
+        // ── 2. TOC
+        ...buildTOC(),
+
+        // ── 3. Objective
         heading("Цель работы"),
         body(lab.objective, { indent: true }),
         pageBreak(),

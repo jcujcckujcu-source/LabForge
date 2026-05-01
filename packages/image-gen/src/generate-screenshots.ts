@@ -1,7 +1,8 @@
-import { highlightCSharp } from "./highlight";
+import { highlightCode } from "./highlight";
 import { buildIdeElement } from "./ide-template";
 import { buildConsoleElement } from "./console-template";
-import { renderElementToPng } from "./render";
+import { renderElementToPng, renderSvgToPng } from "./render";
+import { renderMermaidToPng } from "./mermaid-render";
 
 export interface Screenshots {
   idePng: Buffer;
@@ -12,18 +13,21 @@ export interface TaskScreenshot {
   taskNumber: number;
   idePng: Buffer;
   consolePng: Buffer | null; // null если hasConsoleOutput === false
+  diagramPng: Buffer | null; // null если нет диаграммы
 }
 
 /** Старый API — один иде + один консоль для обратной совместимости */
 export async function generateScreenshots(
   code: string,
   consoleOutput: string,
-  fontData: ArrayBuffer
+  fontData: ArrayBuffer,
+  extension = "cs"
 ): Promise<Screenshots> {
-  const tokenLines = await highlightCSharp(code);
+  const fileName = `Program.${extension}`;
+  const tokenLines = await highlightCode(code, fileName);
 
   const ideElement = buildIdeElement({
-    fileName: "Program.cs",
+    fileName,
     tokenLines,
   });
 
@@ -49,27 +53,40 @@ export async function generateTaskScreenshots(
     code: string;
     output: string;
     hasConsoleOutput: boolean;
+    diagram?: string;
   }>,
-  fontData: ArrayBuffer
+  fontData: ArrayBuffer,
+  extension = "cs"
 ): Promise<TaskScreenshot[]> {
   const results: TaskScreenshot[] = [];
 
   for (const task of tasks) {
-    const tokenLines = await highlightCSharp(task.code);
+    const fileName = extension === "txt" ? `Network_Config_${task.number}.conf` : `Task${task.number}.${extension}`;
+    const tokenLines = await highlightCode(task.code, fileName);
     const ideElement = buildIdeElement({
-      fileName: `Task${task.number}.cs`,
+      fileName,
       tokenLines,
     });
 
     const idePng = await renderElementToPng(ideElement, 1200, 650, fontData);
 
     let consolePng: Buffer | null = null;
-    if (task.hasConsoleOutput && task.output.trim()) {
-      const consoleElement = buildConsoleElement({ outputText: task.output });
+    const outputText = task.output || "";
+    if (task.hasConsoleOutput && outputText.trim()) {
+      const consoleElement = buildConsoleElement({ outputText });
       consolePng = await renderElementToPng(consoleElement, 900, 500, fontData);
     }
 
-    results.push({ taskNumber: task.number, idePng, consolePng });
+    let diagramPng: Buffer | null = null;
+    if (task.diagram && task.diagram.trim()) {
+      try {
+        diagramPng = await renderMermaidToPng(task.diagram);
+      } catch (e) {
+        console.error("Failed to render diagram:", e);
+      }
+    }
+
+    results.push({ taskNumber: task.number, idePng, consolePng, diagramPng });
   }
 
   return results;
