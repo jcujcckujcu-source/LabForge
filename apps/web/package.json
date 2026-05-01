@@ -1,0 +1,33 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "build:cf": "npx @cloudflare/next-on-pages",
+    "deploy": "npm run build:cf && wrangler pages deploy .vercel/output/static --project-name=lab-gen",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@lab-gen/doc-gen": "*",
+    "@lab-gen/image-gen": "*",
+    "@lab-gen/llm-client": "*",
+    "mermaid": "^11.14.0",
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@cloudflare/next-on-pages": "latest",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
